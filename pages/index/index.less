@@ -1,0 +1,24 @@
+@charset "UTF-8";
+// 引用 Less 变量 , 代码片段
+@import '../../style/variable.less';
+.index {
+	margin: 20rpx;
+
+	.feature {
+		width: 80%;
+		margin: auto;
+		margin-top: 40rpx;
+		.item {
+			border-radius: 10rpx;
+			padding: 4rpx 10rpx;
+			margin-bottom: 20rpx;
+			margin-right: 20rpx;
+			display: inline-block;
+			&::before {
+				position: relative;
+				left: -30rpx;
+				content: '*';
+			}
+		}
+	}
+}

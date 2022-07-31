@@ -1,0 +1,132 @@
+@charset "UTF-8";
+// 引用 Less 变量 , 代码片段
+@import './variable.less';
+// 所有的 image 显示为行内块级元素
+image {
+	display: inline-block;
+	width: 100%;
+}
+// 页面内容的宽，一般用在顶层容器上
+.pageContentWidth {
+	width: 90%;
+	margin: auto;
+}
+.clear {
+	clear: both;
+}
+.formItem-require {
+	&::after {
+		content: '*';
+		width: 4rpx;
+		margin-left: 6rpx;
+		height: 4rpx;
+		color: red;
+	}
+}
+// 给列表页面给个全屏幕的高度，用于上滑加载更多数据
+.Listpage {
+	padding-top: 20rpx;
+	padding-bottom: 20rpx;
+	height: calc(100vh - 38rpx);
+}
+// 底边留出固定的边距
+.marginBottom20 {
+	margin-bottom: 20rpx;
+}
+.txt-center {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flex;
+	display: flex;
+	-webkit-box-pack: center;
+	-webkit-justify-content: center;
+	-ms-flex-pack: center;
+	justify-content: center;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+.tf,
+.txt-right {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: -ms-flex;
+	display: flex;
+	-webkit-box-pack: end;
+	-webkit-justify-content: flex-end;
+	-ms-flex-pack: end;
+	justify-content: flex-end;
+	-webkit-box-align: center;
+	-webkit-align-items: center;
+	-ms-flex-align: center;
+	align-items: center;
+}
+// 弹性布局 对齐方式可以覆盖
+.flexLayout {
+	display: flex;
+	justify-content: space-evenly;
+	align-items: center;
+}
+// 给容器加上阴影
+.boxShadow {
+	box-shadow: 10rpx 10rpx 10rpx 4rpx rgba(172, 172, 172, 0.2);
+}
+// 文本溢出显示···
+.textEllipsis {
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+.privacyAgreement {
+	justify-content: center;
+	font-size: 26rpx;
+	display: flex;
+	align-content: stretch;
+	align-items: center;
+	color: #ccc;
+	.checkbox {
+		display: inline-block;
+		border: 2rpx solid #ccc;
+		border-radius: 50%;
+		width: 30rpx;
+		height: 30rpx;
+		margin-right: 10rpx;
+		.symbol {
+			display: inline-block;
+			width: 26rpx;
+			height: 26rpx;
+			background-color: @themeColor;
+			border-radius: 50%;
+			margin: 2rpx;
+		}
+	}
+}
+.btn-success {
+	color: #fff;
+	background: #ce671331 !important;
+}
+.btn-danger {
+	color: #fff;
+	background: transparent !important;
+}
+.btn-warning {
+	color: #fff;
+	background: #5050504b !important;
+}
+// 按钮禁用
+.btn-disabled {
+	background: #ccc !important;
+	color: #aaa !important;
+}
+
+// 报名按钮
+.hasSigned {
+	background-color: @btnDisabled !important;
+}
+.NotSign {
+	background-color: @themeColor !important;
+}
+.outOfDate {
+	background-color: #7f7f7f !important;
+}

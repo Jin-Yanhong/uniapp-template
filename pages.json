@@ -1,0 +1,70 @@
+{
+	"pages": [
+		{
+			"path": "pages/index/index",
+			"style": {
+				"navigationBarTitleText": "首頁",
+				"enablePullDownRefresh": true
+			}
+		},
+		{
+			"path": "pages/list/index",
+			"style": {
+				"navigationBarTitleText": "列表",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 126
+			}
+		},
+		{
+			"path": "pages/mine/index",
+			"style": {
+				"navigationBarTitleText": "我的",
+				"enablePullDownRefresh": true,
+				"onReachBottomDistance": 126
+			}
+		},
+		{
+			"path": "pages/login/index",
+			"style": {
+				"navigationBarTitleText": "微信授权",
+				"enablePullDownRefresh": false
+			}
+		}
+	],
+	"tabBar": {
+		"color": "#9C9C9C",
+		"selectedColor": "#13C2A3",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"list": [
+			{
+				"pagePath": "pages/index/index",
+				"iconPath": "static/tabIcon/tab-home.png",
+				"selectedIconPath": "static/tabIcon/tab-home-active.png",
+				"text": "首頁"
+			},
+			{
+				"pagePath": "pages/list/index",
+				"iconPath": "static/tabIcon/tab-activity.png",
+				"selectedIconPath": "static/tabIcon/tab-activity-active.png",
+				"text": "列表"
+			},
+			{
+				"pagePath": "pages/mine/index",
+				"iconPath": "static/tabIcon/tab-mine.png",
+				"selectedIconPath": "static/tabIcon/tab-mine-active.png",
+				"text": "我的"
+			}
+		]
+	},
+	"globalStyle": {
+		"navigationBarTextStyle": "black",
+		"navigationBarTitleText": "",
+		"navigationBarBackgroundColor": "#FFFFFF",
+		"backgroundColor": "#FFFFFF"
+	},
+	"condition": {
+		"current": 0,
+		"list": []
+	}
+}
