@@ -8,6 +8,6 @@ const apiUrl = {
 	/*********************** 微信登陆 ***********************/
 	wxlogin: '/member/wxlogin', // 微信登录
 	UserPhone: '/member/getphone', // 获取微信用户手机号码
-	List: 'bingWallpaper',
+	List: '/unsplash',
 };
 export default apiUrl;

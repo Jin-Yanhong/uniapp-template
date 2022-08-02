@@ -7,12 +7,14 @@ export const ImageBaseUrl = 'http://localhost:8080/static/';
 export const pageSize = 10;
 export const pageNum = 1;
 export const hasNextPage = true;
+
 // 数据渲染类型 加载更多|刷新数据
-export const getDataListType = {
+export const getListOrLoadMore = {
 	getList: 'getList',
 	loadMore: 'loadMore',
 };
-// 列表页相关配置
+
+// 页面导航方式
 export const navTypeList = {
 	navTo: 'navTo',
 	switchTab: 'switchTab',

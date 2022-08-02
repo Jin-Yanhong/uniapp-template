@@ -2,7 +2,7 @@
 import apiUrl from '../api/apiUrls';
 // 接口版本号、 加密密钥
 import { navTypeList, PublicKey, RequestBaseUrl } from '../app';
-import { getDataListType } from '../app';
+import { getListOrLoadMore } from '../app';
 export function isLogin() {
 	let isLogionFlag = JSON.parse(getStorageItem('isLogin')) || false;
 	return isLogionFlag;
@@ -370,42 +370,18 @@ function stopRefresh() {
  * @param { number } pageNum 请求当前页
  * @param { function } callback 请求成功回调函数
  */
-export function reachBottom(url, _this, fieldName, pageSize = 10, pageNum = 1, callback) {
+export function reachBottom({ url, _this, fieldName = {}, data = {}, LoadingVisible = true, pageSize = 10, pageNum = 1 }, callback = null) {
 	// 是否还有下一页
-	if (_this[fieldName.hasNextPage]) {
+	let { hasNextPage = 'hasNextPage' } = fieldName;
+
+	if (_this[hasNextPage]) {
 		// 到达底部当前页 +1
 		pageNum += 1;
 		// 然后发起新的请求
-		listHttpRequest(url, _this, fieldName, pageSize, pageNum, callback);
+		listHttpRequest({ url, _this, fieldName, data, type: getListOrLoadMore.loadMore, LoadingVisible, pageSize, pageNum }, (callback = null));
 	}
 }
-/**
- * @description 页面分享
- * @param { string } provider 必填项
- * @param { string } scene provider 为 weixin 时必选
- * @param { string } type 默认为 0
- * @param { string } title 分享内容的标题
- * @param { string } summary type 为 1 时必选，分享内容的摘要
- * @param { string } imageUrl type 为 0、2、5 时必选，图片地址。type为0时，推荐使用小于20Kb的图片
- * @param { string } mediaUrl type 为 3、4 时必选	音视频地址
- * @param { string } miniProgram 分享配置参数
- */
-export function pageShare(options) {
-	let { title = '', path = '', imageUrl = '', desc = '', bgImgUrl = '', query = '' } = options;
-	path ? path : (path = getCurrentPages()[0].__route__);
-	return {
-		title: title,
-		path: path,
-		imageUrl: imageUrl,
-		desc: desc,
-		bgImgUrl: bgImgUrl,
-		query: query,
-		success: res => {},
-		fail: error => {
-			console.log('pageShare Error', error, 'Options：', options);
-		},
-	};
-}
+
 /**
  *
  * @param { string } url 请求路径
@@ -421,14 +397,14 @@ export function pageShare(options) {
  * @param { number } pageNum 请求当前页
  * @returns
  */
-export function listHttpRequest(url, _this, fieldName, pageSize = 10, pageNum = 1, { type = '', data = {}, LoadingVisible = true }, callback = null) {
+export function listHttpRequest({ url, _this, fieldName = {}, data = {}, type = getListOrLoadMore.getList, LoadingVisible = true, pageSize = 10, pageNum = 1 }, callback = null) {
 	// 设置默认值，页面里面可以省去一些不必要的参数
-	fieldName.hasNextPage == fieldName.hasNextPage ? fieldName.hasNextPage : 'hasNextPage';
-	fieldName.listField == fieldName.listField ? fieldName.listField : 'listField';
-	fieldName.pageNum == fieldName.pageNum ? fieldName.pageNum : 'pageNum';
-	fieldName.pageSize == fieldName.pageSize ? fieldName.pageSize : 'pageSize';
-	_this[fieldName.pageSize] = pageSize;
-	_this[fieldName.pageNum] = pageNum;
+
+	let { hasNextPageField = 'hasNextPage', ListField = 'List', pageNumField = 'pageNum', pageSizeField = 'pageSize' } = fieldName;
+	_this[pageSizeField] = pageSize;
+	_this[pageNumField] = pageNum;
+	_this[hasNextPageField] = true;
+	_this.$forceUpdate();
 	httpRequest(
 		{
 			url,
@@ -442,18 +418,20 @@ export function listHttpRequest(url, _this, fieldName, pageSize = 10, pageNum = 
 		},
 		function (res) {
 			let hasNextPage = res.length < pageSize ? false : true;
-			if (type == getDataListType.loadMore) {
+			if (type == getListOrLoadMore.loadMore) {
 				// 加载更多
-				_this[fieldName.listField] = [..._this[fieldName.listField], ...res];
-			} else if (type == getDataListType.getList) {
+				_this[ListField] = [..._this[ListField], ...res];
+			} else if (type == getListOrLoadMore.getList) {
 				// 下拉刷新
-				_this[fieldName.listField] = [...res];
+				_this[ListField] = [...res];
 			}
-			_this[fieldName.hasNextPage] = hasNextPage;
-			_this[fieldName.data] = hasNextPage;
+			_this[hasNextPage] = hasNextPage;
+
 			_this.$forceUpdate();
+			console.log(res.length, pageSize);
+
 			if (callback) {
-				callback(res, hasNextPage, pageSize, pageNum);
+				callback(hasNextPage, res);
 			}
 		}
 	);
