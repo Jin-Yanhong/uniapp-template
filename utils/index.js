@@ -28,6 +28,7 @@ export function httpRequest(options, callback, errCallback = null) {
 			success: 200,
 			error: 0,
 			unAuthorized: 403,
+			userErr: -1,
 		},
 		msg: 'msg',
 	};
@@ -57,9 +58,6 @@ export function httpRequest(options, callback, errCallback = null) {
 					case resObj.code.success:
 						resolve(data.data);
 						break;
-					case resObj.code.success2:
-						resolve(data.data);
-						break;
 					case resObj.code.unAuthorized:
 						showToast('當前用戶沒有權限');
 						navTo('/pages/login');
@@ -68,9 +66,6 @@ export function httpRequest(options, callback, errCallback = null) {
 					case resObj.code.error:
 						showToast(data['msg']);
 						reject(data['msg']);
-						break;
-					case resObj.code.userErr:
-						reject(data);
 						break;
 					default:
 						showToast('未知错误');
@@ -91,7 +86,6 @@ export function httpRequest(options, callback, errCallback = null) {
 		})
 		.catch(err => {
 			console.log('httpRequest Error', { url, method, data, header }, err);
-			// 如果用户信息缺失，提示补全用户信息
 			if (err?.code === resObj.code.userErr) {
 				let { __route__ } = getCurrentPages()[0];
 				uni.clearStorageSync();
@@ -426,10 +420,7 @@ export function listHttpRequest({ url, _this, fieldName = {}, data = {}, type = 
 				_this[ListField] = [...res];
 			}
 			_this[hasNextPage] = hasNextPage;
-
 			_this.$forceUpdate();
-			console.log(res.length, pageSize);
-
 			if (callback) {
 				callback(hasNextPage, res);
 			}
