@@ -3,7 +3,7 @@
 		{
 			"path": "pages/index/index",
 			"style": {
-				"navigationBarTitleText": "首頁",
+				"navigationBarTitleText": "首页",
 				"enablePullDownRefresh": true
 			}
 		},
@@ -27,6 +27,13 @@
 			"path": "pages/login/index",
 			"style": {
 				"navigationBarTitleText": "微信授权",
+				"enablePullDownRefresh": false
+			}
+		},
+		{
+			"path": "pages/other/index",
+			"style": {
+				"navigationBarTitleText": "其他页面",
 				"enablePullDownRefresh": false
 			}
 		}

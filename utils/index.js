@@ -1,10 +1,9 @@
 // 网络请求
-import apiUrl from '../api/apiUrls';
-// 接口版本号、 加密密钥
-import { navTypeList, PublicKey, RequestBaseUrl } from '../app';
-import { getListOrLoadMore } from '../app';
+import apiUrl from "../api/apiUrls";
+import { getListOrLoadMore, navTypeList, RequestBaseUrl } from "../app";
+
 export function isLogin() {
-	let isLogionFlag = JSON.parse(getStorageItem('isLogin')) || false;
+	let isLogionFlag = JSON.parse(getStorageItem("isLogin")) || false;
 	return isLogionFlag;
 }
 
@@ -19,23 +18,22 @@ export function isLogin() {
  * @param { function } errCallback  需要单独处理的失败回调函数
  */
 export function httpRequest(options, callback, errCallback = null) {
-	let { url, method, data = {}, header = {}, LoadingVisible = false } = options;
+	let { url, method = "get", data = {}, header = {}, LoadingVisible = false } = options;
 	if (LoadingVisible) {
 		showLoading();
 	}
 	let resObj = {
 		code: {
-			success: 200,
-			error: 0,
-			unAuthorized: 403,
-			userErr: -1,
+			success: 20000,
+			userNotAuthorized: 50004,
+			userErr: 50003,
+			notFound: 404,
 		},
-		msg: 'msg',
+		msg: "msg",
 	};
 	let defaultOptions = {
 		data: {},
 		header: {},
-		method: 'get',
 	};
 	// Object.assign(target, source) target 为合并后的对象，该方法返回合并后的对象，如果有同名属性，会被覆盖
 	// 合并全局 data 数据
@@ -45,7 +43,7 @@ export function httpRequest(options, callback, errCallback = null) {
 	new Promise((resolve, reject) => {
 		uni.request({
 			url: RequestBaseUrl + url,
-			method: method || defaultOptions.method,
+			method: method,
 			data: data,
 			header: header,
 			success: res => {
@@ -58,18 +56,18 @@ export function httpRequest(options, callback, errCallback = null) {
 					case resObj.code.success:
 						resolve(data.data);
 						break;
-					case resObj.code.unAuthorized:
-						showToast('當前用戶沒有權限');
-						navTo('/pages/login');
-						reject(data['msg']);
+					case resObj.code.userNotAuthorized:
+						showToast("用户未登录");
+						navTo("/pages/login");
+						reject(data["msg"]);
 						break;
-					case resObj.code.error:
-						showToast(data['msg']);
-						reject(data['msg']);
+					case resObj.code.notFound:
+						showToast("请求地址不正确");
+						reject(data["msg"]);
 						break;
 					default:
-						showToast('未知错误');
-						reject(data['msg']);
+						showToast("未知错误");
+						reject(data["msg"]);
 						break;
 				}
 			},
@@ -77,7 +75,7 @@ export function httpRequest(options, callback, errCallback = null) {
 				if (LoadingVisible) {
 					hideLoading();
 				}
-				reject('httpRequest Failed', { url, method, data, header }, err);
+				reject("httpRequest Failed", { url, method, data, header }, err);
 			},
 		});
 	})
@@ -85,14 +83,14 @@ export function httpRequest(options, callback, errCallback = null) {
 			callback(res);
 		})
 		.catch(err => {
-			console.log('httpRequest Error', { url, method, data, header }, err);
+			console.log("httpRequest Error", { url, method, data, header }, err);
 			if (err?.code === resObj.code.userErr) {
 				let { __route__ } = getCurrentPages()[0];
 				uni.clearStorageSync();
 				uni.reLaunch({
-					url: '/' + __route__,
+					url: "/" + __route__,
 					fail(err) {
-						console.log('reLaunch Error', err);
+						console.log("reLaunch Error", err);
 					},
 				});
 			}
@@ -114,7 +112,7 @@ export function fileUpload(options, callback) {
 	let defaultOptions = {
 		data: {},
 		header: {},
-		method: 'post',
+		method: "post",
 	};
 	// 合并全局 data 数据
 	Object.assign(data, defaultOptions.data);
@@ -136,7 +134,7 @@ export function fileUpload(options, callback) {
 				uni.uploadFile({
 					url: RequestBaseUrl + apiUrl.FileUpload,
 					filePath: result.tempFilePaths[0],
-					name: 'file',
+					name: "file",
 					header: header,
 					formData: {
 						...data,
@@ -164,11 +162,11 @@ export function fileUpload(options, callback) {
 					callback(result);
 				})
 				.catch(err => {
-					console.log('fileUpload Failed :', err);
+					console.log("fileUpload Failed :", err);
 				});
 		},
 		fail: err => {
-			console.log('chooseImage Failed :', err);
+			console.log("chooseImage Failed :", err);
 		},
 	});
 }
@@ -176,24 +174,25 @@ export function fileUpload(options, callback) {
  *
  * @param { string } navType 页面路由切换方式
  */
-export function handleRedirect(navType = navTypeList.navTo) {
-	let { __route__, options } = getCurrentPages()[0];
-	let query = '';
-	for (const [key, value] of Object.entries(options)) {
-		query += `${key}=${value}&`;
-	}
-	let currentPage = __route__ + '?' + query.substring(0, query.length - 1);
+export function handleRedirect(urlPath, navType = navTypeList.navTo) {
 	let data = JSON.stringify({
 		type: navType,
-		to: currentPage,
+		to: urlPath,
 	});
 	confirmModal(
-		'提示',
-		'您尚未登錄，是否現在登錄？',
+		"提示",
+		"您尚未登錄，是否現在登錄？",
 		function () {
-			setStorageItem('redirect', data);
+			setStorageItem("redirect", data);
 			setTimeout(() => {
-				navTo('/pages/login/index', false, navType);
+				uni.navigateTo({
+					url: "/pages/login/index",
+					fail: err => {
+						console.log("handleRedirect Error", err, {
+							urlStr,
+						});
+					},
+				});
 			}, 200);
 		},
 		function () {
@@ -209,23 +208,17 @@ export function handleRedirect(navType = navTypeList.navTo) {
  * @param { string } navType 目标页面导航类型
  */
 export function navTo(urlStr, isNeedLogin = false, navType = navTypeList.navTo) {
-	let isLoginUrl = urlStr == '/pages/login/index';
+	let isLoginUrl = urlStr == "/pages/login/index";
 	if (isLoginUrl) {
-		let { __route__, options } = getCurrentPages()[0];
-		let query = '';
-		for (const [key, value] of Object.entries(options)) {
-			query += `${key}=${value}&`;
-		}
-		let currentPage = __route__ + '?' + query.substring(0, query.length - 1);
 		let data = JSON.stringify({
 			type: navType,
-			to: currentPage,
+			to: urlStr,
 		});
-		setStorageItem('redirect', data);
+		setStorageItem("redirect", data);
 		uni.navigateTo({
 			url: urlStr,
 			fail: err => {
-				console.log('navigateTo Error', err, {
+				console.log("navigateTo Error", err, {
 					urlStr,
 				});
 			},
@@ -233,12 +226,12 @@ export function navTo(urlStr, isNeedLogin = false, navType = navTypeList.navTo) 
 		return;
 	}
 	if (isNeedLogin == true && isLogin() == false) {
-		handleRedirect(navType);
+		handleRedirect(urlStr, navType);
 	} else {
 		uni.navigateTo({
 			url: urlStr,
 			fail: err => {
-				console.log('navigateTo Error', err, {
+				console.log("navigateTo Error", err, {
 					urlStr,
 				});
 			},
@@ -254,12 +247,12 @@ export function navTo(urlStr, isNeedLogin = false, navType = navTypeList.navTo) 
  */
 export function switchTab(urlStr, isNeedLogin = false, navType = navTypeList.switchTab) {
 	if (isNeedLogin == true && isLogin() == false) {
-		handleRedirect(navType);
+		handleRedirect(urlStr, navType);
 	} else {
 		uni.switchTab({
 			url: urlStr,
 			fail: err => {
-				console.log('switchTab Error', err, {
+				console.log("switchTab Error", err, {
 					urlStr,
 				});
 			},
@@ -275,12 +268,12 @@ export function switchTab(urlStr, isNeedLogin = false, navType = navTypeList.swi
  */
 export function redirectTo(urlStr, isNeedLogin = false, navType = navTypeList.redirectTo) {
 	if (isNeedLogin == true && isLogin() == false) {
-		handleRedirect(navType);
+		handleRedirect(urlStr, navType);
 	} else {
 		uni.redirectTo({
 			url: urlStr,
 			fail: err => {
-				console.log('redirectTo', err, {
+				console.log("redirectTo", err, {
 					urlStr,
 				});
 			},
@@ -288,7 +281,7 @@ export function redirectTo(urlStr, isNeedLogin = false, navType = navTypeList.re
 	}
 }
 // 返回某一级页面
-export function navBack(delta = 1, animationType = 'pop-in', duration = 300) {
+export function navBack(delta = 1, animationType = "pop-in", duration = 300) {
 	uni.navigateBack({
 		delta: delta,
 		animationType: animationType,
@@ -296,7 +289,7 @@ export function navBack(delta = 1, animationType = 'pop-in', duration = 300) {
 	});
 }
 // 显示悬浮轻提示
-export function showToast(title = '', icon = 'none', duration = 2000, mask = 'false') {
+export function showToast(title = "", icon = "none", duration = 2000, mask = "false") {
 	uni.showToast({
 		title: title,
 		icon: icon,
@@ -305,7 +298,7 @@ export function showToast(title = '', icon = 'none', duration = 2000, mask = 'fa
 	});
 }
 // 显示 loading 动画
-export function showLoading(title = '加载中', mask = false) {
+export function showLoading(title = "加载中", mask = false) {
 	uni.showLoading({
 		title,
 		mask,
@@ -366,7 +359,7 @@ function stopRefresh() {
  */
 export function reachBottom({ url, _this, fieldName = {}, data = {}, LoadingVisible = true, pageSize = 10, pageNum = 1 }, callback = null) {
 	// 是否还有下一页
-	let { hasNextPage = 'hasNextPage' } = fieldName;
+	let { hasNextPage = "hasNextPage" } = fieldName;
 
 	if (_this[hasNextPage]) {
 		// 到达底部当前页 +1
@@ -394,7 +387,7 @@ export function reachBottom({ url, _this, fieldName = {}, data = {}, LoadingVisi
 export function listHttpRequest({ url, _this, fieldName = {}, data = {}, type = getListOrLoadMore.getList, LoadingVisible = true, pageSize = 10, pageNum = 1 }, callback = null) {
 	// 设置默认值，页面里面可以省去一些不必要的参数
 
-	let { hasNextPageField = 'hasNextPage', ListField = 'List', pageNumField = 'pageNum', pageSizeField = 'pageSize' } = fieldName;
+	let { hasNextPageField = "hasNextPage", ListField = "List", pageNumField = "pageNum", pageSizeField = "pageSize" } = fieldName;
 	_this[pageSizeField] = pageSize;
 	_this[pageNumField] = pageNum;
 	_this[hasNextPageField] = true;
@@ -456,7 +449,7 @@ export function setStorageItem(key, value) {
 		key: key,
 		data: value,
 		fail: error => {
-			console.log('setStorageSync Error :', error);
+			console.log("setStorageSync Error :", error);
 		},
 	});
 }
@@ -478,7 +471,7 @@ export function removeStorageItem(key) {
 	uni.removeStorage({
 		key: key,
 		fail: err => {
-			console.log('removeStorage Error', err);
+			console.log("removeStorage Error", err);
 		},
 	});
 }
@@ -492,22 +485,22 @@ export function dateFormater(time, pattern) {
 	let datetime = new Date(time).toJSON();
 	new Date(+new Date(datetime) + 8 * 3600 * 1000)
 		.toISOString()
-		.replace(/T/g, ' ')
-		.replace(/\.[\d]{3}Z/, '');
+		.replace(/T/g, " ")
+		.replace(/\.[\d]{3}Z/, "");
 	if (arguments.length === 0 || !time) {
 		return null;
 	}
-	const format = pattern || '{y}-{m}-{d} {h}:{i}:{s}';
+	const format = pattern || "{y}-{m}-{d} {h}:{i}:{s}";
 	let date;
-	if (typeof time === 'object') {
+	if (typeof time === "object") {
 		date = time;
 	} else {
-		if (typeof time === 'string' && /^[0-9]+$/.test(time)) {
+		if (typeof time === "string" && /^[0-9]+$/.test(time)) {
 			time = parseInt(time);
-		} else if (typeof time === 'string') {
-			time = time.replace(new RegExp(/-/gm), '/');
+		} else if (typeof time === "string") {
+			time = time.replace(new RegExp(/-/gm), "/");
 		}
-		if (typeof time === 'number' && time.toString().length === 10) {
+		if (typeof time === "number" && time.toString().length === 10) {
 			time = time * 1000;
 		}
 		date = new Date(time);
@@ -524,11 +517,11 @@ export function dateFormater(time, pattern) {
 	const time_str = format.replace(/{(y|m|d|h|i|s|a)+}/g, (result, key) => {
 		let value = formatObj[key];
 		// Note: getDay() returns 0 on Sunday
-		if (key === 'a') {
-			return ['日', '一', '二', '三', '四', '五', '六'][value];
+		if (key === "a") {
+			return ["日", "一", "二", "三", "四", "五", "六"][value];
 		}
 		if (result.length > 0 && value < 10) {
-			value = '0' + value;
+			value = "0" + value;
 		}
 		return value || 0;
 	});
@@ -536,7 +529,7 @@ export function dateFormater(time, pattern) {
 }
 export function getDateTime(timestamp) {
 	let date = new Date(timestamp * 1000);
-	let dateStr = date.getFullYear() + '年/' + (date.getMonth() + 1) + '月' + date.getDay() + '日 ' + (date.getHours() > 10 ? date.getHours() : '0' + date.getHours()) + ':' + (date.getMinutes() > 10 ? date.getMinutes() : '0' + date.getMinutes());
+	let dateStr = date.getFullYear() + "年/" + (date.getMonth() + 1) + "月" + date.getDay() + "日 " + (date.getHours() > 10 ? date.getHours() : "0" + date.getHours()) + ":" + (date.getMinutes() > 10 ? date.getMinutes() : "0" + date.getMinutes());
 	return dateStr;
 }
 /**
@@ -547,20 +540,20 @@ export function getDateTime(timestamp) {
  * @param { string } collectionLabel 目标值的字段 默认 'label'
  * @returns
  */
-export function fieldTranslate(collection, value, collectionField = 'value', collectionLabel = 'label') {
+export function fieldTranslate(collection, value, collectionField = "value", collectionLabel = "label") {
 	if (collection && value && toString(value).length) {
-		if (Object.prototype.toString.call(collection) === '[object Array]') {
+		if (Object.prototype.toString.call(collection) === "[object Array]") {
 			let checked = collection.find(ele => {
 				return ele[collectionField] == value;
 			});
-			let tips = (checked && checked[collectionLabel]) || '解释错误';
+			let tips = (checked && checked[collectionLabel]) || "解释错误";
 			return tips;
 		} else {
-			console.log('Field Translate Error：类型必须为 Array');
-			return '';
+			console.log("Field Translate Error：类型必须为 Array");
+			return "";
 		}
 	} else {
-		console.log('Field Translate Error：数据字段集合、为必须参数!');
-		return '';
+		console.log("Field Translate Error：数据字段集合、为必须参数!");
+		return "";
 	}
 }

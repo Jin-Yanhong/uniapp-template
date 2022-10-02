@@ -1,0 +1,24 @@
+{
+	"semi": true,
+	"tabWidth": 4,
+	"printWidth": 360,
+	"useTabs": true,
+	"quoteProps": "as-needed",
+	"arrowParens": "avoid",
+	"bracketSpacing": true,
+	"bracketSameLine": false,
+	"overrides": [
+		{
+			"files": ["*.js"],
+			"options": {
+				"semi": true,
+				"tabWidth": 4,
+				"useTabs": true,
+				"quoteProps": "as-needed",
+				"bracketSpacing": true,
+				"bracketSameLine": true,
+				"printWidth": 360
+			}
+		}
+	]
+}
