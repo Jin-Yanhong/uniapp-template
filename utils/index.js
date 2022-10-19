@@ -181,7 +181,7 @@ export function handleRedirect(urlPath, navType = navTypeList.navTo) {
     });
     confirmModal(
         '提示',
-        '您尚未登錄，是否現在登錄？',
+        '您尚未登录，是否現在登录？',
         function () {
             setStorageItem('redirect', data);
             setTimeout(() => {

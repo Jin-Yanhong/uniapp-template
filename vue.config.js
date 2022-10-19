@@ -1,6 +1,6 @@
 module.exports = {
     chainWebpack: config => {
-    // Config Less Loader
+        // Config Less Loader
         config.module
             .rule('**/*.less')
             .test(/\.less$/i)

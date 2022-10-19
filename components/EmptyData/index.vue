@@ -2,7 +2,7 @@
     <view v-if="dataLength == 0" class="EmptyData">
         <view class="Empty" style="height: 100%">
             <image class="image" src="../../static/noData.svg" mode="aspectFit" />
-            <text class="text">沒有數據</text>
+            <text class="text">沒有数据</text>
         </view>
     </view>
     <view v-else-if="dataLength > 0 && hasNextPage == false" class="noMore" style="height: 60rpx">

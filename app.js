@@ -8,7 +8,7 @@ export const pageSize = 10;
 export const pageNum = 1;
 export const hasNextPage = true;
 
-// 数据渲染类型 加载更多|刷新数据
+// 数据渲染类型 加载更多 | 刷新数据
 export const getListOrLoadMore = {
     getList: 'getList',
     loadMore: 'loadMore'
