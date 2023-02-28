@@ -8,10 +8,10 @@
 	</view>
 </template>
 <script>
-import apiUrl from "../../api/apiUrls";
-import { getListOrLoadMore, pageNum, pageSize } from "../../app";
-import EmptyData from "../../components/EmptyData";
-import { listHttpRequest, reachBottom, startRefresh } from "../../utils";
+import apiUrl from '../../api/apiUrls';
+import { getListOrLoadMore, pageNum, pageSize } from '../../app';
+import EmptyData from '../../components/EmptyData';
+import { listHttpRequest, reachBottom, startRefresh } from '../../utils';
 export default {
 	components: {
 		EmptyData,

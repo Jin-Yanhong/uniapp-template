@@ -5,10 +5,10 @@ const apiUrl = {
 	/*********************** 公用 ***********************/
 
 	/*********************** 微信登陆 ***********************/
-	wxGetPhone: "wx/getPhone",
-	wxlogin: "wx/login",
+	wxGetPhone: 'wx/getPhone',
+	wxlogin: 'wx/login',
 
 	// 业务
-	List: "links/bingWallpaper",
+	List: 'links/bingWallpaper',
 };
 export default apiUrl;

@@ -10,32 +10,32 @@
 	</view>
 </template>
 <script>
-import apiUrl from "../../api/apiUrls";
-import { getStorageItem, httpRequest, setStorageItem, showToast } from "../../utils";
+import apiUrl from '../../api/apiUrls';
+import { getStorageItem, httpRequest, setStorageItem, showToast } from '../../utils';
 
 export default {
 	data() {
 		return {
-			userPhone: "",
+			userPhone: '',
 			userInfo: {},
 			wxLoginData: {},
 			hasInfo: false,
 		};
 	},
 	onLoad() {
-		setStorageItem("isLogin", false);
+		setStorageItem('isLogin', false);
 	},
 	methods: {
 		handleWxLogin() {
 			let _this = this;
 			uni.getUserProfile({
-				desc: "微信昵称和微信头像只用于展示",
+				desc: '微信昵称和微信头像只用于展示',
 				success: res => {
-					let { avatarUrl, nickName = " " } = res.userInfo;
-					setStorageItem("avatarUrl", avatarUrl);
-					setStorageItem("nickName", nickName);
+					let { avatarUrl, nickName = ' ' } = res.userInfo;
+					setStorageItem('avatarUrl', avatarUrl);
+					setStorageItem('nickName', nickName);
 					uni.login({
-						provider: "weixin",
+						provider: 'weixin',
 						success: loginRes => {
 							httpRequest(
 								{
@@ -51,22 +51,22 @@ export default {
 										_this.setStorage(res.userinfo);
 									} else {
 										_this.hasInfo = false;
-										showToast("用户尚未注册，请使用电话号码授权登录 !");
+										showToast('用户尚未注册，请使用电话号码授权登录 !');
 										_this.userInfo = {};
 									}
-								}
+								},
 							);
 						},
 					});
 				},
 				fail: err => {
-					console.log("getUserProfile Error", err);
+					console.log('getUserProfile Error', err);
 				},
 			});
 		},
 		getUserPhone(e) {
 			let _this = this;
-			if (e.detail.errMsg == "getPhoneNumber:ok") {
+			if (e.detail.errMsg == 'getPhoneNumber:ok') {
 				httpRequest(
 					{
 						url: apiUrl.wxGetPhone,
@@ -81,27 +81,27 @@ export default {
 						} else {
 							showToast(result.errmsg);
 						}
-					}
+					},
 				);
 			}
 		},
 		handleRedirect() {
 			let _this = this;
-			let redirect = getStorageItem("redirect");
-			redirect ? (redirect = JSON.parse(redirect)) : "";
+			let redirect = getStorageItem('redirect');
+			redirect ? (redirect = JSON.parse(redirect)) : '';
 			if (redirect) {
 				_this.redirectTo(redirect.to);
 			} else {
 				// 否则去首页
-				_this.switchTab("/pages/index/index");
+				_this.switchTab('/pages/index/index');
 			}
 		},
 		setStorage(result) {
-			result ? "" : (result = {});
+			result ? '' : (result = {});
 			let _this = this;
-			setStorageItem("isLogin", "true");
-			showToast("授权成功");
-			setStorageItem("phoneNumber", JSON.stringify(result));
+			setStorageItem('isLogin', 'true');
+			showToast('授权成功');
+			setStorageItem('phoneNumber', JSON.stringify(result));
 			setTimeout(() => {
 				_this.handleRedirect();
 			}, 1000);
@@ -110,5 +110,5 @@ export default {
 };
 </script>
 <style lang="less">
-@import "./index.less";
+@import './index.less';
 </style>

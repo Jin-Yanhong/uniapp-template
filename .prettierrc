@@ -1,42 +1,21 @@
 {
-    "semi": true,
-    "tabWidth": 4,
-    "printWidth": 360,
-    "useTabs": false,
-    "quoteProps": "as-needed",
-    "bracketSpacing": true,
-    "singleQuote": true,
-    "bracketSameLine": false,
-    "endOfLine": "crlf",
-    "arrowParens": "avoid",
-    "overrides": [
-        {
-            "files": ["*.yml"],
-            "options": {
-                "tabWidth": 2,
-                "useTabs": false
-            }
-        },
-        {
-            "files": ["*.ts", "*.tsx", "*.js", "*.vue"],
-            "options": {
-                "semi": true,
-                "tabWidth": 4,
-                "printWidth": 360,
-                "useTabs": false,
-                "quoteProps": "as-needed",
-                "bracketSpacing": true,
-                "singleQuote": true,
-                "bracketSameLine": false,
-                "endOfLine": "crlf",
-                "arrowParens": "avoid"
-            }
-        },
-        {
-            "files": [".eslintrc.js"],
-            "options": {
-                "quoteProps": "consistent"
-            }
-        }
-    ]
+	"semi": true,
+	"tabWidth": 4,
+	"useTabs": true,
+	"printWidth": 512,
+	"endOfLine": "lf",
+	"singleQuote": true,
+	"proseWrap": "never",
+	"arrowParens": "avoid",
+	"editorconfig": true,
+	"trailingComma": "all",
+	"bracketSpacing": true,
+	"jsxSingleQuote": true,
+	"useEditorConfig": false,
+	"bracketSameLine": true,
+	"quoteProps": "consistent",
+	"singleAttributePerLine": false,
+	"vueIndentScriptAndStyle": false,
+	"embeddedLanguageFormatting": "auto",
+	"htmlWhitespaceSensitivity": "strict"
 }
