@@ -1,7 +1,7 @@
 {
-    "name": "uniapp-template",
+    "name": "h5",
     "version": "1.0.0",
-    "description": "一个 uniapp 的模板项目，提供列表页、微信登录页面，使用 Less 样式预处理语言，集成 ESLint + Prettier 代码风格检查。",
+    "description": "",
     "main": "main.js",
     "scripts": {
         "lint": "vue-cli-service lint --fix"

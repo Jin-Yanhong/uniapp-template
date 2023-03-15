@@ -14,30 +14,8 @@
 				"enablePullDownRefresh": true,
 				"onReachBottomDistance": 126
 			}
-		},
-		{
-			"path": "pages/mine/index",
-			"style": {
-				"navigationBarTitleText": "我的",
-				"enablePullDownRefresh": true,
-				"onReachBottomDistance": 126
-			}
-		},
-		{
-			"path": "pages/login/index",
-			"style": {
-				"navigationBarTitleText": "微信授权",
-				"enablePullDownRefresh": false
-			}
-		},
-		{
-			"path": "pages/other/index",
-			"style": {
-				"navigationBarTitleText": "其他页面",
-				"enablePullDownRefresh": false
-			}
 		}
-	],
+ ],
 	"tabBar": {
 		"color": "#9C9C9C",
 		"selectedColor": "#13C2A3",
